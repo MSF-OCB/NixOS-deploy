@@ -1,5 +1,5 @@
 # NixOS-deploy
-Automatically deploy the NixOS configuration
+Automatically deploy the NixOS configuration.
 
 This action can be included by adding a file containing the following definition to `.github/workflows`:
 ```

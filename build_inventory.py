@@ -28,9 +28,9 @@ def ports(event_log):
   with open(event_log, 'r') as f:
     data = json.load(f)
   regex = re.compile(r'\(x-nixos:rebuild:relay_port:([1-9][0-9]*)\)')
-  return {port
-          for commit in data["commits"]
-          for port in get_ports(regex, commit["message"])}
+  return { port
+           for commit in data["commits"]
+           for port in get_ports(regex, commit["message"]) }
 
 def inventory_definition(tunnel_ports):
   return { f"tunnelled_{port}": { "ansible_port": port } for port in tunnel_ports }

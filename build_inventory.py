@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import argparse
+import itertools
 import json
 import re
 
@@ -13,9 +14,10 @@ def configure_yaml(yaml):
 def args_parser():
   parser = argparse.ArgumentParser()
   parser.add_argument('--fixedhosts', type=str, required=False, dest='fixed_hosts', default="")
-  parser.add_argument('--eventlog',   type=str, required=True,  dest='event_log')
-  parser.add_argument('--keyfile',    type=str, required=True,  dest='key_file')
-  parser.add_argument('--timeout',    type=int, required=True,  dest='time_out')
+  parser.add_argument('--fixedtunnelports', type=str, required=False, dest='fixed_ports', default="")
+  parser.add_argument('--eventlog', type=str, required=True,  dest='event_log')
+  parser.add_argument('--keyfile',  type=str, required=True,  dest='key_file')
+  parser.add_argument('--timeout',  type=int, required=True,  dest='time_out')
   parser.add_argument('--json', required=False, dest='use_json', action='store_true')
   return parser
 
@@ -39,7 +41,7 @@ def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
   return {
     "all": {
       "children": {
-        "relays": {
+        "direct_hosts": {
           "hosts": { key: None for key in fixed_hosts }
         },
         "tunnelled": {
@@ -72,8 +74,10 @@ def write_inventory(inv, use_json):
 
 def go():
   args = args_parser().parse_args()
+  tunnel_ports = itertools.chain(args.fixed_ports.split(),
+                                 ports(args.event_log))
   write_inventory(inventory(args.fixed_hosts.split(),
-                            ports(args.event_log),
+                            tunnel_ports,
                             args.key_file,
                             args.time_out),
                   args.use_json)

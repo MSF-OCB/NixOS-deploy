@@ -1,9 +1,9 @@
 ---
 - hosts: all
   tasks:
-  - name: Start the NixOS rebuild service
+  - name: Start the configured deployment service
     systemd:
-      name: nixos_rebuild_config.service
+      name: "{{ nixos_deploy_service }}"
       state: restarted
       scope: system
     become: yes

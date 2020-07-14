@@ -52,6 +52,7 @@ def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
                                                             f"-i {key_file} " + \
                                                              "-p 22 " + \
                                                             f"-o ConnectTimeout={time_out} " + \
+                                                             "-o StrictHostKeyChecking=no " + \
                                                              "tunneller@sshrelay2.msf.be'"
           }
         }

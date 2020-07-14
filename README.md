@@ -30,9 +30,9 @@ The following environment variables can be specified
 in the workflow definition to configure the action:
 1. `NIXOS_ROBOT_KEY` (required):
    the SSH private key for the `robot` user (cf. Keeper) used to connect to the remote servers.
-   It is advisable to store this value as a github secret
-   (see the settings page of the repository integrating this action)
-   and to reference it like in the example above.
+   It is advisable to store this value as a github secret and to reference it like in the example above.
+   Github secrets can either be defined at the organisation level and shared with
+   selected repositories, or they can be defined on a per-repository basis.
 1. `NIXOS_DEPLOY_SERVICE` (required):
    set the service to start to trigger the deployment
 1. `NIXOS_DEPLOY_FIXED_HOSTS` (optional):

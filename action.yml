@@ -1,5 +1,24 @@
+---
+
 name: 'NixOS deploy'
-description: 'Deploy the NixOS config' 
+description: 'Deploy the NixOS config'
+
+inputs:
+  nixos_robot_key:
+    description: 'The private key for the robot user.'
+    required: true
+  nixos_deploy_service:
+    description: 'The service to start to trigger the deployment.'
+    required: true
+  nixos_deploy_fixed_hosts:
+    description: 'The hosts to deploy to on every run.'
+    required: false
+    default: ''
+  nixos_deploy_fixed_tunnel_ports:
+    description: 'The relay ports to deploy to on every run.'
+    required: false
+    default: ''
+
 runs:
   using: 'docker'
   image: 'Dockerfile'

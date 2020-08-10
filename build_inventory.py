@@ -15,17 +15,17 @@ commit_directive_regex = re.compile(
 def configure_yaml(yaml):
   yaml.SafeDumper.add_representer(
     type(None),
-    lambda dumper, value: dumper.represent_scalar(u'tag:yaml.org,2002:null', '')
+    lambda dumper, _: dumper.represent_scalar(u'tag:yaml.org,2002:null', '')
   )
 
 def args_parser():
   parser = argparse.ArgumentParser()
-  parser.add_argument('--fixedhosts', type=str, required=False, dest='fixed_hosts', default="")
-  parser.add_argument('--fixedtunnelports', type=str, required=False, dest='fixed_ports', default="")
-  parser.add_argument('--eventlog', type=str, required=True,  dest='event_log')
-  parser.add_argument('--keyfile',  type=str, required=True,  dest='key_file')
-  parser.add_argument('--timeout',  type=int, required=True,  dest='time_out')
-  parser.add_argument('--json', required=False, dest='use_json', action='store_true')
+  parser.add_argument('--fixedhosts',       type=str, dest='fixed_hosts', required=False, default="")
+  parser.add_argument('--fixedtunnelports', type=str, dest='fixed_ports', required=False, default="")
+  parser.add_argument('--eventlog',         type=str, dest='event_log',   required=True)
+  parser.add_argument('--keyfile',          type=str, dest='key_file',    required=True)
+  parser.add_argument('--timeout',          type=int, dest='time_out',    required=True)
+  parser.add_argument('--json', dest='use_json', action='store_true',     required=False)
   return parser
 
 def get_ports(commit_message):

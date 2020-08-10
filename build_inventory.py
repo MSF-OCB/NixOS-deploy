@@ -71,23 +71,23 @@ def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
 
 def write_inventory(inv, use_json):
   if use_json:
-    print(json.dumps(inv, indent=2))
+    return json.dumps(inv, indent=2)
   else:
     import yaml
     configure_yaml(yaml)
-    print(yaml.safe_dump(inv, indent=2,
-                              default_flow_style=False,
-                              width=120))
+    return yaml.safe_dump(inv, indent=2,
+                               default_flow_style=False,
+                               width=120)
 
 def go():
   args = args_parser().parse_args()
   tunnel_ports = itertools.chain(args.fixed_ports.split(),
                                  ports(args.event_log))
-  write_inventory(inventory(args.fixed_hosts.split(),
-                            tunnel_ports,
-                            args.key_file,
-                            args.time_out),
-                  args.use_json)
+  print(write_inventory(inventory(args.fixed_hosts.split(),
+                                  tunnel_ports,
+                                  args.key_file,
+                                  args.time_out),
+                        args.use_json))
 
 if __name__ == "__main__":
   go()

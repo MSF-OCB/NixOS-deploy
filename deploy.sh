@@ -23,6 +23,9 @@ python3 "${ansible_dir}"/build_inventory.py \
   --fixedtunnelports "${fixedports}" \
   > "${hostfile}"
 
+echo "Calling the Ansible playbook with the following inventory:"
+cat "${hostfile}"
+
 export ANSIBLE_PYTHON_INTERPRETER="auto_silent"
 export ANSIBLE_HOST_KEY_CHECKING="False"
 export ANSIBLE_SSH_RETRIES=5

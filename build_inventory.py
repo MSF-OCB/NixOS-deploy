@@ -5,6 +5,13 @@ import itertools
 import json
 import re
 
+# Regex to match the directive
+#   (x-nixos:rebuild:relay_port:XXXX)
+# in commit messages, signaling to include the host at port XXXX at the relays
+commit_directive_regex = re.compile(
+  r'\(x-nixos:rebuild:relay_port:([1-9][0-9]*)\)'
+)
+
 def configure_yaml(yaml):
   yaml.SafeDumper.add_representer(
     type(None),
@@ -21,18 +28,17 @@ def args_parser():
   parser.add_argument('--json', required=False, dest='use_json', action='store_true')
   return parser
 
-def get_ports(regex, commit_message):
-  ms = regex.finditer(commit_message)
+def get_ports(commit_message):
+  ms = commit_directive_regex.finditer(commit_message)
   # Group 0 is the full matched expression, group 1 is the first subgroup
   return map(lambda m: m.group(1), ms)
 
 def ports(event_log):
   with open(event_log, 'r') as f:
     data = json.load(f)
-  regex = re.compile(r'\(x-nixos:rebuild:relay_port:([1-9][0-9]*)\)')
   return { port
            for commit in data["commits"]
-           for port in get_ports(regex, commit["message"]) }
+           for port in get_ports(commit["message"]) }
 
 def inventory_definition(tunnel_ports):
   return { f"tunnelled_{port}": { "ansible_port": port } for port in tunnel_ports }

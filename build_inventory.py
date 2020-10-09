@@ -59,7 +59,7 @@ def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
                                                              "-p 22 " + \
                                                             f"-o ConnectTimeout={time_out} " + \
                                                              "-o StrictHostKeyChecking=yes " + \
-                                                             "-l tunneller " \
+                                                             "-l tunneller " + \
                                                              "sshrelay.ocb.msf.org'"
           }
         }

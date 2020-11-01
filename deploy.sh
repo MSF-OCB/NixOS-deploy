@@ -33,7 +33,8 @@ cat "${hostfile}"
 export ANSIBLE_PYTHON_INTERPRETER="auto_silent"
 export ANSIBLE_HOST_KEY_CHECKING="False"
 export ANSIBLE_SSH_RETRIES=5
-ansible-playbook --timeout="${connection_timeout}" \
+ansible-playbook --forks 100 \
+                 --timeout="${connection_timeout}" \
                  --key-file "${keyfile}" \
                  --inventory "${hostfile}" \
                  --extra-vars "nixos_deploy_service=${deploy_service}" \

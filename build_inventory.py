@@ -18,6 +18,7 @@ def configure_yaml(yaml):
     lambda dumper, _: dumper.represent_scalar(u'tag:yaml.org,2002:null', '')
   )
 
+
 def args_parser():
   parser = argparse.ArgumentParser()
   parser.add_argument('--fixedhosts',       type=str, dest='fixed_hosts', required=False, default="")
@@ -28,17 +29,20 @@ def args_parser():
   parser.add_argument('--json', dest='use_json', action='store_true',     required=False)
   return parser
 
+
 def get_ports(commit_message):
   ms = commit_directive_regex.finditer(commit_message)
   # Group 0 is the full matched expression, group 1 is the first subgroup
   return map(lambda m: m.group(1), ms)
 
+
 def ports(event_log):
   with open(event_log, 'r') as f:
     data = json.load(f)
   return { port
-           for commit in data["commits"]
+           for commit in data.get("commits")
            for port in get_ports(commit["message"]) }
+
 
 def inventory_definition(tunnel_ports):
   return { f"tunnelled_{port}": { "ansible_port": port } for port in tunnel_ports }
@@ -70,6 +74,7 @@ def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
     }
   }
 
+
 def write_inventory(inv, use_json):
   if use_json:
     return json.dumps(inv, indent=2)
@@ -80,6 +85,7 @@ def write_inventory(inv, use_json):
                                default_flow_style=False,
                                width=120)
 
+
 def go():
   args = args_parser().parse_args()
   tunnel_ports = itertools.chain(args.fixed_ports.split(),
@@ -89,6 +95,7 @@ def go():
                                   args.key_file,
                                   args.time_out),
                         args.use_json))
+
 
 if __name__ == "__main__":
   go()

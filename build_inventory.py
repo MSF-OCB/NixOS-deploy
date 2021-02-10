@@ -40,7 +40,7 @@ def ports(event_log):
   with open(event_log, 'r') as f:
     data = json.load(f)
   return { port
-           for commit in data.get("commits")
+           for commit in data.get("commits", [])
            for port in get_ports(commit["message"]) }
 
 

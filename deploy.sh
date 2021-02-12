@@ -8,7 +8,7 @@ fixedports="${INPUT_NIXOS_DEPLOY_FIXED_TUNNEL_PORTS}"
 umask 0077
 
 action_dir="${GITHUB_ACTION_PATH}"
-keyfile="/root/.id_ec"
+keyfile="${action_dir}/id_ec"
 hostfile="${action_dir}/hosts.yml"
 connection_timeout=120
 

@@ -7,8 +7,6 @@ deploy_service="${INPUT_NIXOS_DEPLOY_SERVICE}"
 fixedhosts="${INPUT_NIXOS_DEPLOY_FIXED_HOSTS}"
 fixedports="${INPUT_NIXOS_DEPLOY_FIXED_TUNNEL_PORTS}"
 
-echo "Received the following fixed tunnel ports: ${fixedports}"
-
 umask 0077
 
 action_dir="${GITHUB_ACTION_PATH}"

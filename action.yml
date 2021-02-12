@@ -25,4 +25,9 @@ runs:
     - name: Run the deploy script
       run: ${{ github.action_path }}/deploy.sh
       shell: bash
+      env:
+        INPUT_NIXOS_ROBOT_KEY: ${{ inputs.nixos_robot_key }}
+        INPUT_NIXOS_DEPLOY_SERVICE: ${{ inputs.nixos_deploy_service }}
+        INPUT_NIXOS_DEPLOY_FIXED_HOSTS: ${{ inputs.nixos_deploy_fixed_hosts }}
+        INPUT_NIXOS_DEPLOY_FIXED_TUNNEL_PORTS: ${{ inputs.nixos_deploy_fixed_tunnel_ports }}
 

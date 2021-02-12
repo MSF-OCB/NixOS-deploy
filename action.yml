@@ -22,7 +22,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Run the deploy script
+    - name: Run the deployment script
       run: ${{ github.action_path }}/deploy.sh
       shell: bash
       env:

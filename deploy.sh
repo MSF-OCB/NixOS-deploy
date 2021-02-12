@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /usr/bin/env bash
 
 robot_key="${INPUT_NIXOS_ROBOT_KEY}"
 deploy_service="${INPUT_NIXOS_DEPLOY_SERVICE}"
@@ -7,9 +7,9 @@ fixedports="${INPUT_NIXOS_DEPLOY_FIXED_TUNNEL_PORTS}"
 
 umask 0077
 
-ansible_dir="/nixos_deploy"
+action_dir="${GITHUB_ACTION_PATH}"
 keyfile="/root/.id_ec"
-hostfile="${ansible_dir}/hosts.yml"
+hostfile="${action_dir}/hosts.yml"
 connection_timeout=120
 
 echo "${robot_key}" > "${keyfile}"
@@ -19,7 +19,7 @@ cat <<EOF > /etc/ssh/ssh_known_hosts
 sshrelay.ocb.msf.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf
 EOF
 
-python3 "${ansible_dir}"/build_inventory.py \
+python3 "${action_dir}"/build_inventory.py \
   --keyfile "${keyfile}" \
   --timeout "${connection_timeout}" \
   --eventlog "${GITHUB_EVENT_PATH}" \
@@ -38,5 +38,5 @@ ansible-playbook --forks 100 \
                  --key-file "${keyfile}" \
                  --inventory "${hostfile}" \
                  --extra-vars "nixos_deploy_service=${deploy_service}" \
-                 "${ansible_dir}"/deploy.yml
+                 "${action_dir}"/deploy.yml
 

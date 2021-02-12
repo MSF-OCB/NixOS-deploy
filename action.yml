@@ -20,6 +20,9 @@ inputs:
     default: ''
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: composite
+  steps:
+    - name: Run the deploy script
+      run: ${{ github.action_path }}/deploy.sh
+      shell: bash
 

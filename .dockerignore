@@ -1,7 +1,0 @@
-.git
-test/
-.dockerignore
-Dockerfile
-README.md
-action.yml 
-

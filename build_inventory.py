@@ -9,7 +9,7 @@ import re
 #   (x-nixos:rebuild:relay_port:XXXX)
 # in commit messages, signaling to include the host at port XXXX at the relays
 commit_directive_regex = re.compile(
-  r'\(x-nixos:rebuild:relay_port:([1-9][0-9]*)\)'
+  r'\(x-nixos:rebuild:relay_port:([1-9][0-9]{,4})\)'
 )
 
 def configure_yaml(yaml):
@@ -31,9 +31,13 @@ def args_parser():
 
 
 def get_ports(commit_message):
+
+  def is_port(port: str) -> bool:
+    return port.isdigit() and (int(port) < 2**16)
+
   ms = commit_directive_regex.finditer(commit_message)
   # Group 0 is the full matched expression, group 1 is the first subgroup
-  return map(lambda m: m.group(1), ms)
+  return filter(is_port, map(lambda m: m.group(1), ms))
 
 
 def ports(event_log):
@@ -46,6 +50,7 @@ def ports(event_log):
 
 def inventory_definition(tunnel_ports):
   return { f"tunnelled_{port}": { "ansible_port": port } for port in tunnel_ports }
+
 
 def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
   return {

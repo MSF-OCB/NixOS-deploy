@@ -18,6 +18,18 @@ inputs:
     description: 'The relay ports to deploy to on every run.'
     required: false
     default: ''
+  nixos_deploy_sshrelay_domain:
+    description: 'The SSH relay via which to connect to tunneled hosts.'
+    required: false
+    default: 'sshrelay.ocb.msf.org'
+  nixos_deploy_sshrelay_user:
+    description: 'The user to connect to the SSH relay.'
+    required: false
+    default: 'tunneller'
+  nixos_deploy_sshrelay_port:
+    description: 'The port to connect to the SSH relay.'
+    required: false
+    default: '22'
 
 runs:
   using: composite
@@ -30,4 +42,7 @@ runs:
         INPUT_NIXOS_DEPLOY_SERVICE: ${{ inputs.nixos_deploy_service }}
         INPUT_NIXOS_DEPLOY_FIXED_HOSTS: ${{ inputs.nixos_deploy_fixed_hosts }}
         INPUT_NIXOS_DEPLOY_FIXED_TUNNEL_PORTS: ${{ inputs.nixos_deploy_fixed_tunnel_ports }}
+        INPUT_NIXOS_DEPLOY_SSHRELAY_DOMAIN: ${{ inputs.nixos_deploy_sshrelay_domain }}
+        INPUT_NIXOS_DEPLOY_SSHRELAY_USER: ${{ inputs.nixos_deploy_sshrelay_user }}
+        INPUT_NIXOS_DEPLOY_SSHRELAY_PORT: ${{ inputs.nixos_deploy_sshrelay_port }}
 

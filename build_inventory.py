@@ -5,6 +5,9 @@ import itertools
 import json
 import re
 
+from typing import Iterable, Mapping, Set
+
+
 # Regex to match the directive
 #   (x-nixos:rebuild:relay_port:XXXX)
 # in commit messages, signaling to include the host at port XXXX at the relays
@@ -21,6 +24,9 @@ def configure_yaml(yaml):
 
 def args_parser():
   parser = argparse.ArgumentParser()
+  parser.add_argument('--sshrelay_domain',  type=str, dest='sshrelay_domain', required=True)
+  parser.add_argument('--sshrelay_user',    type=str, dest='sshrelay_user', required=True)
+  parser.add_argument('--sshrelay_port',    type=int, dest='sshrelay_port', required=True)
   parser.add_argument('--fixedhosts',       type=str, dest='fixed_hosts', required=False, default="")
   parser.add_argument('--fixedtunnelports', type=str, dest='fixed_ports', required=False, default="")
   parser.add_argument('--eventlog',         type=str, dest='event_log',   required=True)
@@ -30,17 +36,21 @@ def args_parser():
   return parser
 
 
-def get_ports(commit_message):
+def is_port(port: str) -> bool:
+  return port.isdigit() and (int(port) < 2**16)
 
-  def is_port(port: str) -> bool:
-    return port.isdigit() and (int(port) < 2**16)
 
+def toInt(s: str) -> int:
+  return int(s)
+
+
+def get_ports(commit_message: str) -> Iterable[int]:
   ms = commit_directive_regex.finditer(commit_message)
   # Group 0 is the full matched expression, group 1 is the first subgroup
-  return filter(is_port, map(lambda m: m.group(1), ms))
+  return map(toInt, filter(is_port, map(lambda m: m.group(1), ms)))
 
 
-def ports(event_log):
+def ports(event_log: str) -> Iterable[int]:
   with open(event_log, 'r') as f:
     data = json.load(f)
   return { port
@@ -48,16 +58,22 @@ def ports(event_log):
            for port in get_ports(commit["message"]) }
 
 
-def inventory_definition(tunnel_ports):
+def inventory_definition(tunnel_ports: Iterable[int]):
   return { f"tunnelled_{port}": { "ansible_port": port } for port in tunnel_ports }
 
 
-def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
+def inventory(fixed_hosts: Set[str],
+              sshrelay_domain: str,
+              sshrelay_user: str,
+              sshrelay_port: int,
+              tunnel_ports: Set[int],
+              key_file: str,
+              time_out: int) -> Mapping:
   return {
     "all": {
       "children": {
         "direct_hosts": {
-          "hosts": { key: None for key in fixed_hosts }
+          "hosts": { fixed_host: None for fixed_host in fixed_hosts }
         },
         "tunnelled": {
           "hosts": inventory_definition(tunnel_ports),
@@ -65,11 +81,11 @@ def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
             "ansible_host": "localhost",
             "ansible_ssh_common_args": f"-o 'ProxyCommand=ssh -W %h:%p " + \
                                                             f"-i {key_file} " + \
-                                                             "-p 22 " + \
+                                                            f"-p {sshrelay_port} " + \
                                                             f"-o ConnectTimeout={time_out} " + \
                                                              "-o StrictHostKeyChecking=yes " + \
-                                                             "-l tunneller " + \
-                                                             "sshrelay.ocb.msf.org'"
+                                                            f"-l {sshrelay_user} " + \
+                                                            f"{sshrelay_domain}'"
           }
         }
       },
@@ -80,22 +96,26 @@ def inventory(fixed_hosts, tunnel_ports, key_file, time_out):
   }
 
 
-def write_inventory(inv, use_json):
+def write_inventory(inv: Mapping, use_json: bool) -> str:
   if use_json:
     return json.dumps(inv, indent=2)
   else:
     import yaml
     configure_yaml(yaml)
-    return yaml.safe_dump(inv, indent=2,
-                               default_flow_style=False,
-                               width=120)
+    return yaml.safe_dump(inv,                      # type: ignore
+                          indent=2,
+                          default_flow_style=False,
+                          width=120)
 
 
-def go():
+def main() -> None:
   args = args_parser().parse_args()
-  tunnel_ports = itertools.chain(args.fixed_ports.split(),
-                                 ports(args.event_log))
-  print(write_inventory(inventory(args.fixed_hosts.split(),
+  tunnel_ports = set(itertools.chain(map(toInt, args.fixed_ports.split()),
+                                     ports(args.event_log)))
+  print(write_inventory(inventory(set(args.fixed_hosts.split()),
+                                  args.sshrelay_domain,
+                                  args.sshrelay_user,
+                                  args.sshrelay_port,
                                   tunnel_ports,
                                   args.key_file,
                                   args.time_out),
@@ -103,5 +123,5 @@ def go():
 
 
 if __name__ == "__main__":
-  go()
+  main()
 

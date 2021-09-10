@@ -6,6 +6,9 @@ robot_key="${INPUT_NIXOS_ROBOT_KEY}"
 deploy_service="${INPUT_NIXOS_DEPLOY_SERVICE}"
 fixedhosts="${INPUT_NIXOS_DEPLOY_FIXED_HOSTS}"
 fixedports="${INPUT_NIXOS_DEPLOY_FIXED_TUNNEL_PORTS}"
+sshrelay_domain="${INPUT_NIXOS_DEPLOY_SSHRELAY_DOMAIN}"
+sshrelay_user="${INPUT_NIXOS_DEPLOY_SSHRELAY_USER}"
+sshrelay_port="${INPUT_NIXOS_DEPLOY_SSHRELAY_PORT}"
 
 umask 0077
 
@@ -28,6 +31,9 @@ python3 "${action_dir}"/build_inventory.py \
   --eventlog "${GITHUB_EVENT_PATH}" \
   --fixedhosts "${fixedhosts}" \
   --fixedtunnelports "${fixedports}" \
+  --sshrelay_domain "${sshrelay_domain}" \
+  --sshrelay_user "${sshrelay_user}" \
+  --sshrelay_port "${sshrelay_port}" \
   > "${hostfile}"
 
 echo "Calling the Ansible playbook with the following inventory:"

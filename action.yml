@@ -30,6 +30,10 @@ inputs:
     description: 'The port to connect to the SSH relay.'
     required: false
     default: '22'
+  nixos_deploy_sshrelay_public_key:
+    description: 'The public key for the SSH relay'
+    required: false
+    default: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf'
 
 runs:
   using: composite
@@ -45,4 +49,5 @@ runs:
         INPUT_NIXOS_DEPLOY_SSHRELAY_DOMAIN: ${{ inputs.nixos_deploy_sshrelay_domain }}
         INPUT_NIXOS_DEPLOY_SSHRELAY_USER: ${{ inputs.nixos_deploy_sshrelay_user }}
         INPUT_NIXOS_DEPLOY_SSHRELAY_PORT: ${{ inputs.nixos_deploy_sshrelay_port }}
+        INPUT_NIXOS_DEPLOY_SSHRELAY_PUBLIC_KEY: ${{ inputs.nixos_deploy_sshrelay_public_key }}
 

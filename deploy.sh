@@ -9,11 +9,12 @@ fixedports="${INPUT_NIXOS_DEPLOY_FIXED_TUNNEL_PORTS}"
 sshrelay_domain="${INPUT_NIXOS_DEPLOY_SSHRELAY_DOMAIN}"
 sshrelay_user="${INPUT_NIXOS_DEPLOY_SSHRELAY_USER}"
 sshrelay_port="${INPUT_NIXOS_DEPLOY_SSHRELAY_PORT}"
+sshrelay_pubkey="${INPUT_NIXOS_DEPLOY_SSHRELAY_PUBLIC_KEY}"
 
 umask 0077
 
 action_dir="${GITHUB_ACTION_PATH}"
-keyfile="${action_dir}/id_ec"
+keyfile="${action_dir}/id_robot"
 hostfile="${action_dir}/hosts.yml"
 connection_timeout=120
 
@@ -22,7 +23,7 @@ chmod 0400 "${keyfile}"
 
 mkdir --parent ~/.ssh
 cat <<EOF > ~/.ssh/known_hosts
-sshrelay.ocb.msf.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf
+${sshrelay_domain} ${sshrelay_pubkey}
 EOF
 
 python3 "${action_dir}"/build_inventory.py \

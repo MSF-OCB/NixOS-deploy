@@ -2,7 +2,7 @@
 - hosts: all
   tasks:
   - name: Start the configured deployment service
-    command: "sudo systemctl start {{ nixos_deploy_service }}"
+    command: "sudo systemctl --system start {{ nixos_deploy_service }}"
     become: no
     async: 3600
     poll: 10

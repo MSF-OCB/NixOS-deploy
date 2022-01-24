@@ -2,11 +2,8 @@
 - hosts: all
   tasks:
   - name: Start the configured deployment service
-    systemd:
-      name: "{{ nixos_deploy_service }}"
-      state: restarted
-      scope: system
-    become: yes
+    command: "sudo systemctl start {{ nixos_deploy_service }}"
+    become: no
     async: 3600
     poll: 10
 

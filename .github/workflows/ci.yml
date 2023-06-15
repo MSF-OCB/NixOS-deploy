@@ -1,0 +1,28 @@
+name: NixOS deploy CI
+
+on:
+  workflow_dispatch:
+  # We cannot include the paths-ignore part here because this check is set as
+  # required for PRs. Otherwise the PR cannot be merged when this workflow does
+  # not run.
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+
+  test:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Checkout the repo
+        uses: 'actions/checkout@v3'
+      - name: Install the Nix package manager
+        uses: cachix/install-nix-action@master
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run the test
+        run: |
+          ./test.sh

@@ -1,0 +1,26 @@
+all:
+  children:
+    direct_hosts:
+      hosts:
+        sshrelay1.ocb.msf.org:
+        sshrelay2.ocb.msf.org:
+    tunnelled:
+      hosts:
+        tunnelled_1:
+          ansible_port: 1
+        tunnelled_2:
+          ansible_port: 2
+        tunnelled_3:
+          ansible_port: 3
+        tunnelled_6002:
+          ansible_port: 6002
+        tunnelled_9030:
+          ansible_port: 9030
+        tunnelled_9032:
+          ansible_port: 9032
+      vars:
+        ansible_host: localhost
+        ansible_ssh_common_args: -o 'ProxyCommand=ssh -W %h:%p -i /dev/null -p 443 -o ConnectTimeout=90 -o StrictHostKeyChecking=yes
+          -l tunneller sshrelay.ocb.msf.org'
+  vars:
+    ansible_user: robot

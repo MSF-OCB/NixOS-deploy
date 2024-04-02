@@ -1,4 +1,5 @@
-#! /usr/bin/env bash
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash --packages python3 ansible
 
 set -e
 
@@ -49,4 +50,3 @@ ansible-playbook --forks 100 \
                  --inventory "${hostfile}" \
                  --extra-vars "nixos_deploy_service=${deploy_service}" \
                  "${action_dir}"/deploy.yml
-

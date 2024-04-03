@@ -1,4 +1,5 @@
-#! /usr/bin/env bash
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash
 
 output="$(nix develop '.#default' --command ./build_inventory.py \
             --sshrelay_domain sshrelay.ocb.msf.org \

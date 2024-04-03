@@ -1,5 +1,4 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -i bash --packages python3
+#! /usr/bin/env python3
 
 import argparse
 import itertools

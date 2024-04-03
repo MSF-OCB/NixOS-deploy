@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash --packages python3 ansible
+#! nix-shell -i bash --packages python3 ansible nixpkgs
 
 set -e
 
